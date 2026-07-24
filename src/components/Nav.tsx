@@ -46,7 +46,7 @@ export function Nav() {
                 href={link.href}
                 className={`rounded-full px-3.5 py-2 text-sm font-medium transition ${
                   active
-                    ? "bg-brand text-white shadow-sm"
+                    ? "btn-primary bg-brand text-white shadow-sm"
                     : "text-ink-soft hover:bg-brand-soft hover:text-brand-deep"
                 }`}
               >

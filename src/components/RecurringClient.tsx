@@ -60,7 +60,7 @@ export function RecurringClient({
             setShowNew((v) => !v);
             setEditing(null);
           }}
-          className="inline-flex min-h-[46px] items-center rounded-full bg-brand px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-deep active:scale-[0.98]"
+          className="btn-primary inline-flex min-h-[46px] items-center rounded-full bg-brand px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-deep active:scale-[0.98]"
         >
           {showNew ? "Close" : "+ Add recurring"}
         </button>

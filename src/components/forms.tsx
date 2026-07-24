@@ -59,13 +59,13 @@ export function RecurringForm({
           className={inputClass}
         />
       </Field>
-      <Field label="Category">
+      <Field label="Category" hint="Optional — defaults to Essential">
         <select
           name="categoryId"
-          required
-          defaultValue={initial?.categoryId}
+          defaultValue={initial?.categoryId ?? ""}
           className={inputClass}
         >
+          <option value="">Essential (default)</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -347,13 +347,13 @@ export function TransactionForm({
           className={inputClass}
         />
       </Field>
-      <Field label="Category">
+      <Field label="Category" hint="Optional — defaults to Essential">
         <select
           name="categoryId"
-          required
-          defaultValue={initial?.categoryId}
+          defaultValue={initial?.categoryId ?? ""}
           className={inputClass}
         >
+          <option value="">Essential (default)</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}

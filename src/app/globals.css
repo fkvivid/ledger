@@ -88,7 +88,14 @@ input,
 select,
 textarea {
   font: inherit;
-  color: inherit;
+}
+
+/* Primary actions: white label on green — override body ink */
+.btn-primary {
+  color: #ffffff !important;
+}
+.btn-primary:hover {
+  color: #ffffff !important;
 }
 
 /* ---------- Reusable components ---------- */
@@ -125,7 +132,7 @@ textarea {
 }
 .seg-item[data-active="true"] {
   background: var(--brand);
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 2px 8px rgba(15, 66, 52, 0.25);
 }
 
@@ -150,7 +157,7 @@ textarea {
 .chip[data-active="true"] {
   background: var(--brand);
   border-color: var(--brand);
-  color: #fff;
+  color: #ffffff;
 }
 
 /* Mobile bottom-nav safe area */

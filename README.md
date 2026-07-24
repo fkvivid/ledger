@@ -32,6 +32,7 @@ pnpm db:setup
 |---------|----------------|
 | `pnpm dev` | Dev server |
 | `pnpm build` / `pnpm start` | Production |
+| `pnpm test` | Unit tests (period math, money formatting) |
 | `pnpm db:push` | Apply schema to SQLite |
 | `pnpm db:seed` | Seed default categories & settings |
 | `pnpm db:setup` | Push + seed |

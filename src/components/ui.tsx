@@ -99,7 +99,7 @@ export const inputClass =
   "w-full min-h-[46px] rounded-xl border border-line-strong bg-surface px-3.5 py-2.5 text-base text-ink outline-none transition placeholder:text-ink-muted/70 focus:border-brand focus:ring-2 focus:ring-brand/25";
 
 export const btnPrimary =
-  "inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-deep active:scale-[0.98]";
+  "btn-primary inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-deep active:scale-[0.98]";
 
 export const btnGhost =
   "inline-flex min-h-[46px] items-center justify-center rounded-full border border-line-strong bg-surface px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-brand/50 hover:text-brand-deep active:scale-[0.98]";

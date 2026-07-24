@@ -41,6 +41,27 @@ export async function getCategories() {
   return db.select().from(categories).orderBy(categories.name);
 }
 
+/** Prefer "Essential", else first category, else create Essential. */
+export async function getDefaultCategoryId(): Promise<number> {
+  await initDb();
+  const all = await db.select().from(categories).orderBy(categories.id);
+  const essential = all.find(
+    (c) => c.name.toLowerCase() === "essential" || c.type === "essential",
+  );
+  if (essential) return essential.id;
+  if (all[0]) return all[0].id;
+
+  const inserted = await db
+    .insert(categories)
+    .values({
+      name: "Essential",
+      type: "essential",
+      color: "#1f6b57",
+    })
+    .returning({ id: categories.id });
+  return inserted[0]!.id;
+}
+
 export async function getRecurringExpenses() {
   await initDb();
   return db

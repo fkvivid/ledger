@@ -9,11 +9,8 @@ import {
   frequencies,
   recurringExpenses,
   transactions,
-  type CategoryType,
-  type ExpenseFrequency,
-  type Frequency,
 } from "@/db/schema";
-import { initDb } from "@/lib/queries";
+import { getDefaultCategoryId, initDb } from "@/lib/queries";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -22,6 +19,16 @@ function money(v: unknown) {
   const n = typeof v === "string" ? Number(v) : Number(v);
   if (Number.isNaN(n) || n < 0) throw new Error("Invalid amount");
   return n;
+}
+
+/** Empty / missing category → default Essential (or first available). */
+async function resolveCategoryId(raw: FormDataEntryValue | null) {
+  const value = String(raw ?? "").trim();
+  if (value) {
+    const id = Number(value);
+    if (!Number.isNaN(id) && id > 0) return id;
+  }
+  return getDefaultCategoryId();
 }
 
 function revalidateAll() {
@@ -42,8 +49,8 @@ export async function createCategory(formData: FormData) {
   await initDb();
   const data = categorySchema.parse({
     name: formData.get("name"),
-    type: formData.get("type"),
-    color: formData.get("color") || "#2F5D50",
+    type: formData.get("type") || "custom",
+    color: formData.get("color") || "#1f6b57",
   });
   await db.insert(categories).values(data);
   revalidateAll();
@@ -53,8 +60,8 @@ export async function updateCategory(id: number, formData: FormData) {
   await initDb();
   const data = categorySchema.parse({
     name: formData.get("name"),
-    type: formData.get("type"),
-    color: formData.get("color") || "#2F5D50",
+    type: formData.get("type") || "custom",
+    color: formData.get("color") || "#1f6b57",
   });
   await db.update(categories).set(data).where(eq(categories.id, id));
   revalidateAll();
@@ -69,7 +76,7 @@ export async function deleteCategory(id: number) {
 const recurringSchema = z.object({
   name: z.string().min(1).max(120),
   amount: z.coerce.number().nonnegative(),
-  categoryId: z.coerce.number().int().positive(),
+  categoryId: z.number().int().positive(),
   frequency: z.enum(expenseFrequencies),
   payDay: z.coerce.number().int().min(0).max(31),
   startDate: z.string().min(8),
@@ -83,8 +90,8 @@ export async function createRecurring(formData: FormData) {
   const data = recurringSchema.parse({
     name: formData.get("name"),
     amount: money(formData.get("amount")),
-    categoryId: formData.get("categoryId"),
-    frequency: formData.get("frequency") as ExpenseFrequency,
+    categoryId: await resolveCategoryId(formData.get("categoryId")),
+    frequency: formData.get("frequency"),
     payDay: formData.get("payDay"),
     startDate: formData.get("startDate"),
     endDate: endRaw || null,
@@ -100,8 +107,8 @@ export async function updateRecurring(id: number, formData: FormData) {
   const data = recurringSchema.parse({
     name: formData.get("name"),
     amount: money(formData.get("amount")),
-    categoryId: formData.get("categoryId"),
-    frequency: formData.get("frequency") as ExpenseFrequency,
+    categoryId: await resolveCategoryId(formData.get("categoryId")),
+    frequency: formData.get("frequency"),
     payDay: formData.get("payDay"),
     startDate: formData.get("startDate"),
     endDate: endRaw || null,
@@ -137,7 +144,7 @@ export async function createIncome(formData: FormData) {
   const grossRaw = String(formData.get("grossAmount") || "").trim();
   const data = incomeSchema.parse({
     name: formData.get("name"),
-    frequency: formData.get("frequency") as Frequency,
+    frequency: formData.get("frequency"),
     payDay: formData.get("payDay"),
     startDate: formData.get("startDate"),
     endDate: endRaw || null,
@@ -155,7 +162,7 @@ export async function updateIncome(id: number, formData: FormData) {
   const grossRaw = String(formData.get("grossAmount") || "").trim();
   const data = incomeSchema.parse({
     name: formData.get("name"),
-    frequency: formData.get("frequency") as Frequency,
+    frequency: formData.get("frequency"),
     payDay: formData.get("payDay"),
     startDate: formData.get("startDate"),
     endDate: endRaw || null,
@@ -176,7 +183,7 @@ export async function deleteIncome(id: number) {
 const txSchema = z.object({
   date: z.string().min(8),
   amount: z.coerce.number().nonnegative(),
-  categoryId: z.coerce.number().int().positive(),
+  categoryId: z.number().int().positive(),
   note: z.string().optional().nullable(),
   merchant: z.string().optional().nullable(),
 });
@@ -186,7 +193,7 @@ export async function createTransaction(formData: FormData) {
   const data = txSchema.parse({
     date: formData.get("date"),
     amount: money(formData.get("amount")),
-    categoryId: formData.get("categoryId"),
+    categoryId: await resolveCategoryId(formData.get("categoryId")),
     note: String(formData.get("note") || "").trim() || null,
     merchant: String(formData.get("merchant") || "").trim() || null,
   });
@@ -199,7 +206,7 @@ export async function updateTransaction(id: number, formData: FormData) {
   const data = txSchema.parse({
     date: formData.get("date"),
     amount: money(formData.get("amount")),
-    categoryId: formData.get("categoryId"),
+    categoryId: await resolveCategoryId(formData.get("categoryId")),
     note: String(formData.get("note") || "").trim() || null,
     merchant: String(formData.get("merchant") || "").trim() || null,
   });
@@ -212,5 +219,3 @@ export async function deleteTransaction(id: number) {
   await db.delete(transactions).where(eq(transactions.id, id));
   revalidateAll();
 }
-
-export type { CategoryType };

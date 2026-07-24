@@ -131,7 +131,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             <Link
               href="/income"
-              className="inline-flex min-h-[46px] items-center rounded-full bg-brand px-5 text-sm font-semibold text-white"
+              className="btn-primary inline-flex min-h-[46px] items-center rounded-full bg-brand px-5 text-sm font-semibold text-white"
             >
               Add income
             </Link>
